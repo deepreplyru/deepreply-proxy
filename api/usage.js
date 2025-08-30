@@ -8,12 +8,20 @@ export default async function handler(req, res) {
 
   // HEALTHCHECK (можно открыть в браузере)
   if (req.method === 'GET') {
-    const okEnv = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE);
+    const okEnv = Boolean(
+      (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL) &&
+      (
+        process.env.SUPABASE_SERVICE_ROLE ||
+        process.env.SUPABASE_SERVICE_ROLE_KEY ||
+        process.env.SUPABASE_SERVICE_KEY ||
+        process.env.SERVICE_ROLE_KEY
+      )
+    );
     return res.status(okEnv ? 200 : 500).json({
       ok: okEnv,
       note: okEnv
         ? 'POST сюда JSON, чтобы записать usage'
-        : 'Нет SUPABASE_URL или SUPABASE_SERVICE_ROLE в env на Vercel'
+        : 'Нет SUPABASE_URL или service-role ключа (SERVICE_ROLE|SERVICE_ROLE_KEY|SERVICE_KEY) в env на Vercel'
     });
   }
 
@@ -22,11 +30,21 @@ export default async function handler(req, res) {
   }
 
   try {
-    const SUPABASE_URL = process.env.SUPABASE_URL;
-    const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE; // хранится ТОЛЬКО на сервере
+    // === ВАЖНО: ровно ЭТИ ДВЕ СТРОКИ, вместо старых ===
+    const SUPABASE_URL =
+      process.env.SUPABASE_URL ||
+      process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      '';
+
+    const SUPABASE_SERVICE_ROLE =
+      process.env.SUPABASE_SERVICE_ROLE ||
+      process.env.SUPABASE_SERVICE_ROLE_KEY ||
+      process.env.SUPABASE_SERVICE_KEY ||
+      process.env.SERVICE_ROLE_KEY ||
+      '';
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
-      return res.status(500).json({ error: 'Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE env vars' });
+      return res.status(500).json({ error: 'Missing SUPABASE_URL or service-role key' });
     }
 
     const body =
