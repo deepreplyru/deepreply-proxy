@@ -25,8 +25,5 @@
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization" }
       ]
     }
-  ],
-  "functions": {
-    "api/delete-account.js": { "runtime": "nodejs20.x" }
-  }
+  ]
 }
