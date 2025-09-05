@@ -1,4 +1,5 @@
 {
+  "version": 2,
   "headers": [
     {
       "source": "/api/generate",
@@ -26,6 +27,6 @@
     }
   ],
   "functions": {
-    "api/delete-account.js": { "runtime": "nodejs18.x" }
+    "api/delete-account.js": { "runtime": "nodejs20.x" }
   }
 }
